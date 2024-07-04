@@ -15,7 +15,7 @@ def home(request):
         if project.members.filter(id=(request.user.id)).exists():
             proj.append(project)
             
-    return render("index.html", context={"projects": proj})
+    return render(request, "home.html", context={"projects": proj})
 
 @login_required(login_url="login")
 def delete_project(request, pk):
@@ -80,8 +80,8 @@ def create_project(request):
 
 def loginpage(request):
     if request.method == "POST":
-        username = request.data.get("username")
-        password = request.data.get("password")
+        username = request.POST.get("username")
+        password = request.POST.get("password")
         if username and password is None:
             messages.error(request, "Something is missing")
         try:
@@ -94,8 +94,28 @@ def loginpage(request):
             return redirect('home')
         else:
             messages.error(request, "Username or Password doesn't exits")
-    return render("login.html")
+    return render(request, "login.html", context={"page": "login"})
 
 def logoutUser(request):
     logout(request=request)
     return redirect('/login')
+
+
+
+from .forms import SignUpForm
+
+def signup(request):
+    if request.method == "POST":
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            login(request, user)
+            messages.success(request, "Signup successful!")
+            return redirect('home')
+        else:
+            messages.error(request, "There was an error in the signup form.")
+            return redirect("signup")
+    else:
+        return render(request, "login.html", context={"page": "signup"})

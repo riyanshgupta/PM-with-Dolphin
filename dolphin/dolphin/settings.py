@@ -56,7 +56,7 @@ ROOT_URLCONF = 'dolphin.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR/'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -130,4 +130,5 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 MEDIA_ROOT =  os.path.join(BASE_DIR, 'static/image')
-MEDIA_URL = 'static/image/'
+MEDIA_URL = '/image/'
+
